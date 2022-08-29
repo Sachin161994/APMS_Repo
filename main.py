@@ -8,13 +8,13 @@ mysql_pwd = 'root'
 mysql_host = 'localhost'
 mysql_db = 'apms'
 table = 'channel_data'
-tb_list = ['active_tbl','inactive_tbl','joined_tbl']
+tb_list = ['active_tbl','inactive_tbl','joined_table']
 
 db_connection_str = 'mysql+pymysql://' + mysql_usr + ':' + mysql_pwd + '@' + mysql_host + '/' + mysql_db
 db_connection = create_engine(db_connection_str)
 
 for tb in tb_list:
-    db_connection.execute("TRUNCATE TABLE {}".format(tb_list))
+    db_connection.execute("TRUNCATE TABLE {}".format(tb))
 
 
 
