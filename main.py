@@ -23,7 +23,10 @@ df = pd.read_sql('select * from apms.{}'.format(table), con=db_connection)
 
 counter = 0
 counter_two = 0
-# df = df.sort_values(by='ts')
+
+# df.sort_values(by = ['Rank', 'Age'], ascending = [True, False], na_position = 'first')
+
+df = df.sort_values(by=['Date', 'Time'])
 state_prev = df['Ch_1652'][0]
 current_status = 'Off'
 
@@ -33,15 +36,20 @@ def write_to_sql(data_f,tbl):
     data_fr = data_f.to_frame()
     data_fr = data_fr.swapaxes("index", "columns")
 
-
     if tbl == 'active_tbl':
         data_fr['ttf'] = random.randint(0, 1000)
-        return data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name=tbl, con=db_connection, if_exists='append', index= False)
+        data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name='joined_table', con=db_connection, if_exists='append',
+                                                           index=False)
+        return data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name=tbl, con=db_connection, if_exists='append', index=False)
 
     else:
-        return data_fr[['Date', 'Time', 'Ch_1652']].to_sql(name=tbl, con=db_connection, if_exists='append',
+        data_fr['ttf'] = ''
+        data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name='joined_table', con=db_connection, if_exists='append',
+                                                           index=False)
+        return data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name=tbl, con=db_connection, if_exists='append',
                                                                 index=False)
-    
+
+
 
 for ind in df.index:
     if df['Ch_1652'][ind] == 'On' and state_prev == 'On':
