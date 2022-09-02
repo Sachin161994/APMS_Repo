@@ -40,17 +40,8 @@ def write_to_sql(data_f,tbl):
 
     if tbl == 'active_tbl':
         data_fr['ttf'] = random.randint(0, 1000)
-        data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name='joined_table', con=db_connection, if_exists='append',
-                                                           index=False)
-        return data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name=tbl, con=db_connection, if_exists='append', index=False)
-
-    else:
-        data_fr['ttf'] = ''
-        data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name='joined_table', con=db_connection, if_exists='append',
-                                                           index=False)
-        return data_fr[['Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name=tbl, con=db_connection, if_exists='append',
-                                                                index=False)
-
+        data_fr.insert(0, "equipment_name", "DG_1")
+        return data_fr[['equipment_name', 'Date', 'Time', 'Ch_1652', 'ttf']].to_sql(name=tbl, con=db_connection, if_exists='append', index=False)
 
 
 for ind in df.index:
@@ -60,7 +51,7 @@ for ind in df.index:
             current_status = 'On'
             # Entry in On table
             write_to_sql(df.iloc[ind], 'active_tbl')
-            print('always active table ',df.iloc[ind])
+            print('always active table ', df.iloc[ind])
 
     elif df['Ch_1652'][ind] == 'Off' and state_prev == 'Off' and current_status != 'On':
         write_to_sql(df.iloc[ind],'inactive_tbl')
